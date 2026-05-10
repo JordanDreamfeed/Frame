@@ -20,11 +20,12 @@ export default function PricingPage({ onSelect }) {
           <div className="pg-headline">
             Every shot.<br />
             Every mood.<br />
-            <em>One place.</em>
+            <span className="serif">One place.</span>
           </div>
           <div className="pg-sub">
             Start free. Upgrade when the AI saves you more time than it costs.
           </div>
+          <div className="perf" />
         </div>
 
         <div className="billing-toggle">
@@ -68,7 +69,8 @@ export default function PricingPage({ onSelect }) {
               <div
                 key={plan.id}
                 className={
-                  'plan-card' +
+                  'plan-card tier-' +
+                  plan.id +
                   (plan.featured ? ' featured' : '') +
                   (isSel ? ' selected' : '')
                 }
