@@ -158,18 +158,3 @@ export const FAQS = [
 
 let _uid = 1;
 export const id = () => _uid++;
-
-// Lowercase Roman numeral, e.g. 1 -> 'i', 7 -> 'vii'.
-const ROMAN = [
-  [1000, 'm'], [900, 'cm'], [500, 'd'], [400, 'cd'],
-  [100, 'c'], [90, 'xc'], [50, 'l'], [40, 'xl'],
-  [10, 'x'], [9, 'ix'], [5, 'v'], [4, 'iv'], [1, 'i']
-];
-export function toRoman(n) {
-  let v = Math.max(0, Math.floor(n));
-  let r = '';
-  for (const [num, sym] of ROMAN) {
-    while (v >= num) { r += sym; v -= num; }
-  }
-  return r || 'i';
-}

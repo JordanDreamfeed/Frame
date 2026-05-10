@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { PLANS, FAQS, toRoman } from './data.js';
+import { PLANS, FAQS } from './data.js';
 
 export default function PricingPage({ onSelect }) {
   const [annual, setAnnual] = useState(false);
@@ -62,7 +62,7 @@ export default function PricingPage({ onSelect }) {
         </div>
 
         <div className="plans">
-          {PLANS.map((plan, idx) => {
+          {PLANS.map((plan) => {
             const p = price(plan);
             const isSel = selected === plan.id;
             return (
@@ -76,7 +76,6 @@ export default function PricingPage({ onSelect }) {
                 }
                 onClick={() => setSelected(plan.id)}
               >
-                <div className="plan-roman" aria-hidden="true">{toRoman(idx + 1)}</div>
                 <div className="plan-top">
                   <div>
                     <div className="plan-badge">{plan.badge}</div>
@@ -112,13 +111,8 @@ export default function PricingPage({ onSelect }) {
 
                 <ul className="features">
                   {plan.features.map((f, i) => (
-                    <li
-                      key={i}
-                      className={
-                        'feature' + (f.hi ? ' hi' : '') + (!f.ok ? ' off' : '')
-                      }
-                    >
-                      <span className="feature-mark">—</span>
+                    <li key={i} className={'feature' + (f.hi ? ' hi' : '')}>
+                      <span className={f.ok ? 'check' : 'cross'}>{f.ok ? '✓' : '×'}</span>
                       <span>
                         {f.t}
                         {f.ai && <span className="ai-tag">AI</span>}

@@ -37,16 +37,8 @@ export default function AuthScreen({ plan, onBack, onEnter }) {
           </div>
         )}
 
-        <div className="auth-title">
-          {mode === 'signup' ? (
-            <>
-              Create your <em>account</em>.
-            </>
-          ) : (
-            <>
-              Welcome <em>back</em>.
-            </>
-          )}
+        <div className="auth-field-lbl">
+          {mode === 'signup' ? 'Create Account' : 'Welcome Back'}
         </div>
 
         {mode === 'signup' && (
