@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { LIGHTING, LENSES, MOODS, SHOOT_TYPES, VIBES, id } from './data.js';
+import DataSlate from './DataSlate.jsx';
 
 export default function FRAMEApp({ plan }) {
   const [tab, setTab] = useState('shots');
@@ -210,6 +211,17 @@ export default function FRAMEApp({ plan }) {
 
       {tab === 'shots' && (
         <div className="app-panel">
+          <div className="panel-inner">
+          <DataSlate
+            title={title}
+            shootType={shootType}
+            vibes={vibes}
+            shots={shots}
+            moods={moods}
+            blocks={blocks}
+            crew={crew}
+            active="shots"
+          />
           <div className="ai-wrap">
             <div
               style={{
@@ -385,17 +397,39 @@ export default function FRAMEApp({ plan }) {
             Shot List <span className="abadge">{shots.length}</span>
           </div>
           {shots.length === 0 && (
-            <div className="aempty">
-              <div className="aempty-ico">📷</div>
-              Generate a shot list above or add manually
+            <div className="aempty contact-sheet">
+              <div className="contact-frame">
+                <div className="contact-strip" />
+                <div className="contact-strip" />
+                <div className="contact-strip" />
+              </div>
+              <div className="aempty-cap">
+                Generate a shot list above — or add manually
+              </div>
             </div>
           )}
-          {shots.map((s) => (
+          {shots.map((s, i) => (
             <div key={s.id} className={'shot-card' + (s.done ? ' done' : '')}>
               <div className="shot-hdr">
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <div className="shot-num">
-                    SHOT {String(s.id).padStart(2, '0')}
+                <div className="shot-stripes" aria-hidden="true" />
+                <div className="shot-hdr-meta">
+                  <div className="shot-meta-cell">
+                    <div className="shot-meta-lbl">Scene</div>
+                    <div className="shot-meta-val">{String(i + 1).padStart(2, '0')}</div>
+                  </div>
+                  <div className="shot-meta-cell">
+                    <div className="shot-meta-lbl">Shot</div>
+                    <div className="shot-meta-val accent">
+                      {String(s.id).padStart(2, '0')}
+                    </div>
+                  </div>
+                  <div className="shot-meta-cell">
+                    <div className="shot-meta-lbl">Lens</div>
+                    <div className="shot-meta-val">{s.lens}</div>
+                  </div>
+                  <div className="shot-meta-cell">
+                    <div className="shot-meta-lbl">Light</div>
+                    <div className="shot-meta-val">{s.lighting}</div>
                   </div>
                   {s.fromAI && <div className="ai-bdg">✦ AI</div>}
                 </div>
@@ -403,10 +437,15 @@ export default function FRAMEApp({ plan }) {
                   <button
                     className={'act chk' + (s.done ? ' on' : '')}
                     onClick={() => doneShot(s.id)}
+                    title="Mark complete"
                   >
                     ✓
                   </button>
-                  <button className="act" onClick={() => rmShot(s.id)}>
+                  <button
+                    className="act"
+                    onClick={() => rmShot(s.id)}
+                    title="Remove"
+                  >
                     ×
                   </button>
                 </div>
@@ -474,11 +513,23 @@ export default function FRAMEApp({ plan }) {
               </div>
             </div>
           ))}
+          </div>
         </div>
       )}
 
       {tab === 'moodboard' && (
         <div className="app-panel">
+          <div className="panel-inner">
+          <DataSlate
+            title={title}
+            shootType={shootType}
+            vibes={vibes}
+            shots={shots}
+            moods={moods}
+            blocks={blocks}
+            crew={crew}
+            active="moodboard"
+          />
           <div className="slbl">Search Unsplash</div>
           <div className="arow">
             <input
@@ -522,42 +573,66 @@ export default function FRAMEApp({ plan }) {
             Moodboard <span className="abadge">{moods.length}</span>
           </div>
           {moods.length === 0 ? (
-            <div className="aempty">
-              <div className="aempty-ico">🎞</div>Search Unsplash or paste a URL
+            <div className="aempty contact-sheet">
+              <div className="contact-frame">
+                <div className="contact-strip" />
+                <div className="contact-strip" />
+                <div className="contact-strip" />
+              </div>
+              <div className="aempty-cap">Search Unsplash or paste a URL</div>
             </div>
           ) : (
-            <div className="grid2">
-              {moods.map((m) => (
-                <div key={m.id} className="mood-card">
-                  <img
-                    src={m.url}
-                    loading="lazy"
-                    alt=""
-                    onError={(e) =>
-                      (e.currentTarget.src =
-                        'https://picsum.photos/seed/' + m.id + '/400/300')
-                    }
-                  />
-                  <div className="mood-foot">
-                    <span className="mood-cred">{m.credit}</span>
-                    <button
-                      className="arm"
-                      onClick={() =>
-                        setMoods((p) => p.filter((x) => x.id !== m.id))
+            <div className="polaroid-grid">
+              {moods.map((m, i) => (
+                <div
+                  key={m.id}
+                  className="polaroid"
+                  style={{ '--tilt': (i % 2 === 0 ? -1 : 1) * (0.6 + (i % 3) * 0.4) + 'deg' }}
+                >
+                  <div className="polaroid-frame">
+                    <img
+                      src={m.url}
+                      loading="lazy"
+                      alt=""
+                      onError={(e) =>
+                        (e.currentTarget.src =
+                          'https://picsum.photos/seed/' + m.id + '/400/300')
                       }
-                    >
-                      ×
-                    </button>
+                    />
+                    <div className="polaroid-cap">
+                      <span className="mood-cred">{m.credit}</span>
+                      <button
+                        className="arm"
+                        onClick={() =>
+                          setMoods((p) => p.filter((x) => x.id !== m.id))
+                        }
+                      >
+                        ×
+                      </button>
+                    </div>
                   </div>
+                  <span className="polaroid-tape" aria-hidden="true" />
                 </div>
               ))}
             </div>
           )}
+          </div>
         </div>
       )}
 
       {tab === 'schedule' && (
         <div className="app-panel">
+          <div className="panel-inner">
+          <DataSlate
+            title={title}
+            shootType={shootType}
+            vibes={vibes}
+            shots={shots}
+            moods={moods}
+            blocks={blocks}
+            crew={crew}
+            active="schedule"
+          />
           <div className="slbl">Day Schedule</div>
           <div className="sched-hdr">
             <div>Time</div>
@@ -565,6 +640,7 @@ export default function FRAMEApp({ plan }) {
             <div>Duration</div>
             <div />
           </div>
+          <div className="sched-rail">
           {blocks.map((b) => (
             <div key={b.id} className="blk">
               <input
@@ -590,29 +666,46 @@ export default function FRAMEApp({ plan }) {
               </button>
             </div>
           ))}
+          </div>
           <button className="add-blk" onClick={addBlk}>
             ＋ Add Time Block
           </button>
+          </div>
         </div>
       )}
 
       {tab === 'notes' && (
         <div className="app-panel">
+          <div className="panel-inner">
+          <DataSlate
+            title={title}
+            shootType={shootType}
+            vibes={vibes}
+            shots={shots}
+            moods={moods}
+            blocks={blocks}
+            crew={crew}
+            active="notes"
+          />
           <div className="slbl">Director&apos;s Notes</div>
-          <textarea
-            className="notes-ta"
-            value={dirN}
-            onChange={(e) => setDirN(e.target.value)}
-            placeholder="Mood, tone, client brief, technical notes..."
-          />
+          <div className="notes-paper">
+            <textarea
+              className="notes-ta"
+              value={dirN}
+              onChange={(e) => setDirN(e.target.value)}
+              placeholder="Mood, tone, client brief, technical notes..."
+            />
+          </div>
           <div className="slbl">Gear List</div>
-          <textarea
-            className="notes-ta"
-            style={{ minHeight: 100 }}
-            value={gearN}
-            onChange={(e) => setGearN(e.target.value)}
-            placeholder="Camera body, lenses, lighting, grip..."
-          />
+          <div className="notes-paper">
+            <textarea
+              className="notes-ta"
+              style={{ minHeight: 140 }}
+              value={gearN}
+              onChange={(e) => setGearN(e.target.value)}
+              placeholder="Camera body, lenses, lighting, grip..."
+            />
+          </div>
           <div className="slbl">Crew</div>
           {crew.map((c) => (
             <div key={c.id} className="crew-card">
@@ -641,6 +734,7 @@ export default function FRAMEApp({ plan }) {
           <button className="aadd-row" onClick={addCrew}>
             ＋ Add Crew Member
           </button>
+          </div>
         </div>
       )}
     </>
