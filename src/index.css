@@ -1549,3 +1549,204 @@ select.finp {
 @media (min-width: 760px) {
   .panel-inner > .arow { max-width: 640px; }
 }
+
+/* ──────────────────────────────────────────────────────────────
+   HEADER ACTIONS — small print + reset buttons in app header
+   ────────────────────────────────────────────────────────────── */
+.hdr-actions {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+.hdr-act {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  transition: color .2s;
+}
+.hdr-act:hover { color: var(--accent); }
+.hdr-act.danger:hover { color: #d94e20; }
+.hdr-act-sep { color: var(--muted-2); }
+
+/* ──────────────────────────────────────────────────────────────
+   PRINT / PDF EXPORT — call-sheet view
+   Triggered by handlePrint() which adds .printing to <body>.
+   ────────────────────────────────────────────────────────────── */
+@media print {
+  @page { size: letter; margin: 0.6in; }
+
+  html, body {
+    background: white !important;
+    color: #0d0d0d !important;
+    font-size: 11pt !important;
+  }
+
+  /* Hide everything chrome-related */
+  .preview-bar,
+  .app-hdr,
+  .app-tabs,
+  .ai-wrap,
+  .checkout-bar,
+  .hdr-actions,
+  .aadd-row,
+  .add-blk,
+  .arm,
+  .act,
+  .shot-acts,
+  .ai-add-btn,
+  .import-all-btn,
+  .gen-btn,
+  .abtn,
+  .arow,
+  .ai-card,
+  .ai-res-bar,
+  .pg-title-mark { display: none !important; }
+
+  /* Show all panels stacked, ignoring tab state */
+  .app-panel { display: block !important; padding: 0 !important; background: white !important; border: none !important; }
+  .app-panel::before, .app-panel::after { display: none !important; }
+  .panel-inner { padding: 0 !important; max-width: none !important; }
+
+  /* Slate becomes a clean call sheet header */
+  .slate {
+    background: white !important;
+    color: #0d0d0d !important;
+    border: 1px solid #0d0d0d !important;
+    box-shadow: none !important;
+    margin-bottom: 18pt !important;
+    page-break-after: avoid;
+  }
+  .slate-stripes { display: flex !important; height: 12pt !important; }
+  .slate-stripes::before, .slate-stripes::after {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      #0d0d0d 0,
+      #0d0d0d 8pt,
+      white 8pt,
+      white 16pt
+    ) !important;
+  }
+  .slate-meta { border-bottom: 1px solid #0d0d0d !important; }
+  .slate-cell { border-right: 1px solid #0d0d0d !important; padding: 8pt 10pt !important; }
+  .slate-cell .slate-lbl { color: #555 !important; font-size: 7pt !important; }
+  .slate-cell .slate-val { color: #0d0d0d !important; font-size: 13pt !important; }
+  .slate-cell .slate-val.mono { color: #0d0d0d !important; }
+  .slate-stats { background: #fafafa !important; }
+  .slate-stat { border-right: 1px solid #ccc !important; padding: 8pt 6pt !important; }
+  .slate-stat-num { color: #0d0d0d !important; font-size: 18pt !important; }
+  .slate-stat.on { background: white !important; }
+  .slate-stat.on::before { display: none !important; }
+  .slate-rec, .rec-dot { display: none !important; }
+
+  /* Section labels */
+  .slbl {
+    font-family: 'Inter', 'Helvetica', sans-serif !important;
+    font-size: 8pt !important;
+    letter-spacing: 0.12em !important;
+    color: #555 !important;
+    margin: 14pt 0 6pt !important;
+  }
+  .slbl::before { display: none !important; }
+  .slbl::after { background: #ccc !important; }
+
+  /* Shot cards become clean numbered rows */
+  .shot-card {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    margin-bottom: 8pt !important;
+    page-break-inside: avoid !important;
+  }
+  .shot-hdr { background: #fafafa !important; color: #0d0d0d !important; padding: 6pt !important; }
+  .shot-stripes {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      #0d0d0d 0,
+      #0d0d0d 6pt,
+      white 6pt,
+      white 12pt
+    ) !important;
+    width: 12pt !important;
+  }
+  .shot-meta-lbl { color: #777 !important; font-size: 6.5pt !important; }
+  .shot-meta-val { color: #0d0d0d !important; font-size: 11pt !important; }
+  .shot-meta-val.accent { color: #0d0d0d !important; font-weight: 600; }
+  .shot-card.done { opacity: .55; }
+  .shot-card.done .shot-meta-val { text-decoration: line-through; }
+  .shot-body { padding: 8pt !important; }
+  .flbl { color: #777 !important; font-size: 7pt !important; }
+  .finp {
+    color: #0d0d0d !important;
+    border-bottom: 1px solid #ccc !important;
+    font-size: 11pt !important;
+    background: white !important;
+    padding: 4pt 0 !important;
+  }
+  select.finp { background: white !important; }
+  .atag {
+    background: white !important;
+    border: 1px solid #999 !important;
+    color: #0d0d0d !important;
+    font-size: 7pt !important;
+    padding: 2pt 6pt !important;
+  }
+  .atag.on { background: #0d0d0d !important; color: white !important; }
+  .ai-bdg { background: white !important; color: #0d0d0d !important; border: 1px solid #999 !important; }
+
+  /* Polaroids: print the photo, drop the tilt + tape */
+  .polaroid { transform: none !important; page-break-inside: avoid; }
+  .polaroid-frame { box-shadow: none !important; border: 1px solid #ccc !important; }
+  .polaroid-frame::after { display: none !important; }
+  .polaroid-tape { display: none !important; }
+  .polaroid-cap .arm { display: none !important; }
+  .polaroid-grid { grid-template-columns: 1fr 1fr 1fr !important; gap: 10pt !important; }
+
+  /* Schedule: clean rows */
+  .sched-rail::before { background: #0d0d0d !important; opacity: .4 !important; }
+  .sched-rail .blk {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    page-break-inside: avoid;
+  }
+  .sched-rail .blk::before { background: white !important; box-shadow: 0 0 0 4px white !important; }
+  .sched-hdr { background: #fafafa !important; color: #0d0d0d !important; }
+  .sched-hdr::before { color: #555 !important; }
+  .t-inp { color: #0d0d0d !important; border-bottom: 1px solid #ccc !important; }
+
+  /* Notes: drop ruled-paper; print as clean paragraphs */
+  .notes-ta {
+    background: white !important;
+    color: #0d0d0d !important;
+    border: 1px solid #ccc !important;
+    line-height: 1.6 !important;
+    padding: 10pt !important;
+    font-size: 11pt !important;
+    page-break-inside: avoid;
+  }
+  .notes-paper::before { background: #ccc !important; opacity: .5 !important; }
+
+  /* Crew cards */
+  .crew-card { background: white !important; border: 1px solid #ccc !important; page-break-inside: avoid; }
+  .crew-card::before { display: none !important; }
+  .crew-av { background: #0d0d0d !important; color: white !important; border: none !important; }
+  .crew-n, .crew-r { color: #0d0d0d !important; }
+
+  /* Hide empty-state placeholders in print */
+  .aempty { display: none !important; }
+}
+
+/* When .printing is set on body, show every panel so the print
+   captures shots + moodboard + schedule + notes regardless of the
+   currently-active tab. */
+body.printing .app-panel { display: block !important; }

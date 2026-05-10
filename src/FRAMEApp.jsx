@@ -1,36 +1,60 @@
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { LIGHTING, LENSES, MOODS, SHOOT_TYPES, VIBES, id } from './data.js';
 import DataSlate from './DataSlate.jsx';
 
-export default function FRAMEApp({ plan }) {
-  const [tab, setTab] = useState('shots');
-  const [title, setTitle] = useState('My Shoot');
-  const [shots, setShots] = useState([]);
+// useState that persists to localStorage under `frame:<key>`. Reads the
+// stored value on first render so a refresh restores prior state.
+function useStoredState(key, initial) {
+  const [v, setV] = useState(() => {
+    if (typeof window === 'undefined') return initial;
+    try {
+      const raw = window.localStorage.getItem('frame:' + key);
+      if (raw !== null) return JSON.parse(raw);
+    } catch {
+      /* corrupted stored value — fall through to default */
+    }
+    return typeof initial === 'function' ? initial() : initial;
+  });
+  useEffect(() => {
+    try {
+      window.localStorage.setItem('frame:' + key, JSON.stringify(v));
+    } catch {
+      /* quota exceeded or disabled — ignore */
+    }
+  }, [key, v]);
+  return [v, setV];
+}
 
-  const [brief, setBrief] = useState('');
-  const [shootType, setShootType] = useState('Fashion Editorial');
-  const [countMode, setCountMode] = useState('8');
-  const [customN, setCustomN] = useState('');
-  const [vibes, setVibes] = useState(['Editorial']);
+const DEFAULT_BLOCKS = () => [
+  { id: id(), time: '7:00', activity: 'Load in & Setup', duration: '90m' },
+  { id: id(), time: '8:30', activity: 'Hair, Makeup & Wardrobe', duration: '60m' },
+  { id: id(), time: '9:30', activity: 'First Look — Shot 01', duration: '45m' }
+];
+
+export default function FRAMEApp({ plan }) {
+  // Tab + transient AI state stays in plain useState (don't persist).
+  const [tab, setTab] = useStoredState('tab', 'shots');
   const [aiLoading, setAiLoading] = useState(false);
   const [aiResults, setAiResults] = useState([]);
   const [aiAdded, setAiAdded] = useState({});
   const [aiErr, setAiErr] = useState('');
-
-  const [moods, setMoods] = useState([]);
   const [uQ, setUQ] = useState('');
   const [uRes, setURes] = useState([]);
   const [urlIn, setUrlIn] = useState('');
 
-  const [blocks, setBlocks] = useState([
-    { id: id(), time: '7:00', activity: 'Load in & Setup', duration: '90m' },
-    { id: id(), time: '8:30', activity: 'Hair, Makeup & Wardrobe', duration: '60m' },
-    { id: id(), time: '9:30', activity: 'First Look — Shot 01', duration: '45m' }
-  ]);
-
-  const [dirN, setDirN] = useState('');
-  const [gearN, setGearN] = useState('');
-  const [crew, setCrew] = useState([]);
+  // Persistent shoot state — restored from localStorage on mount.
+  const [title, setTitle] = useStoredState('title', 'My Shoot');
+  const [shots, setShots] = useStoredState('shots', []);
+  const [brief, setBrief] = useStoredState('brief', '');
+  const [shootType, setShootType] = useStoredState('shootType', 'Fashion Editorial');
+  const [countMode, setCountMode] = useStoredState('countMode', '8');
+  const [customN, setCustomN] = useStoredState('customN', '');
+  const [vibes, setVibes] = useStoredState('vibes', ['Editorial']);
+  const [moods, setMoods] = useStoredState('moods', []);
+  const [blocks, setBlocks] = useStoredState('blocks', DEFAULT_BLOCKS);
+  const [dirN, setDirN] = useStoredState('dirN', '');
+  const [gearN, setGearN] = useStoredState('gearN', '');
+  const [crew, setCrew] = useStoredState('crew', []);
 
   const shotCount = () => {
     if (countMode === 'custom') {
@@ -162,6 +186,41 @@ export default function FRAMEApp({ plan }) {
     setCrew((p) => p.map((c) => (c.id === cid ? { ...c, [k]: v } : c)));
   const rmCrew = (cid) => setCrew((p) => p.filter((c) => c.id !== cid));
 
+  // Print / PDF export — relies on @media print CSS to render a clean
+  // call-sheet-style view with just shot list, schedule, notes, and crew.
+  const handlePrint = () => {
+    document.body.classList.add('printing');
+    // Slight delay so layout settles before the print dialog opens.
+    requestAnimationFrame(() => {
+      window.print();
+      document.body.classList.remove('printing');
+    });
+  };
+
+  const handleReset = () => {
+    if (
+      !window.confirm(
+        'Reset this shoot? Shot list, moodboard, schedule, notes and crew will all be cleared. This cannot be undone.'
+      )
+    )
+      return;
+    setTitle('My Shoot');
+    setShots([]);
+    setBrief('');
+    setShootType('Fashion Editorial');
+    setCountMode('8');
+    setCustomN('');
+    setVibes(['Editorial']);
+    setMoods([]);
+    setBlocks(DEFAULT_BLOCKS());
+    setDirN('');
+    setGearN('');
+    setCrew([]);
+    setAiResults([]);
+    setAiAdded({});
+    setAiErr('');
+  };
+
   return (
     <>
       <div className="app-hdr">
@@ -189,6 +248,19 @@ export default function FRAMEApp({ plan }) {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
+          <div className="hdr-actions">
+            <button className="hdr-act" onClick={handlePrint} title="Print / save as PDF">
+              Print PDF
+            </button>
+            <span className="hdr-act-sep" aria-hidden="true">·</span>
+            <button
+              className="hdr-act danger"
+              onClick={handleReset}
+              title="Clear this shoot"
+            >
+              Reset
+            </button>
+          </div>
         </div>
       </div>
 
@@ -420,7 +492,7 @@ export default function FRAMEApp({ plan }) {
                   <div className="shot-meta-cell">
                     <div className="shot-meta-lbl">Shot</div>
                     <div className="shot-meta-val accent">
-                      {String(s.id).padStart(2, '0')}
+                      {String(i + 1).padStart(2, '0')}
                     </div>
                   </div>
                   <div className="shot-meta-cell">

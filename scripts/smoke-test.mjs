@@ -45,6 +45,14 @@ async function main() {
   log('nav', URL);
   await page.goto(URL, { waitUntil: 'networkidle2', timeout: 15000 });
 
+  // Clear any persisted state from prior runs so assertions are stable
+  await page.evaluate(() => {
+    for (const k of Object.keys(localStorage)) {
+      if (k.startsWith('frame:')) localStorage.removeItem(k);
+    }
+  });
+  await page.reload({ waitUntil: 'networkidle2' });
+
   // ─── Pricing ────────────────────────────────────────────────────────────
   await page.waitForSelector('.plan-card', { timeout: 5000 });
   const planCount = await page.$$eval('.plan-card', (els) => els.length);

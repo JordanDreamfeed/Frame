@@ -156,5 +156,8 @@ export const FAQS = [
   }
 ];
 
-let _uid = 1;
-export const id = () => _uid++;
+// Unique ID that survives page reloads. Date.now() (ms timestamp) seeded
+// at module load + a per-call counter avoids collisions across saved
+// shoots restored from localStorage.
+let _uid = Date.now();
+export const id = () => ++_uid;
