@@ -1549,3 +1549,158 @@ select.finp {
 @media (min-width: 760px) {
   .panel-inner > .arow { max-width: 640px; }
 }
+
+/* ──────────────────────────────────────────────────────────────
+   EDITORIAL ACCENTS — added on top of the cinematic system.
+   Big Fraunces italic page-titles per tab, Roman numerals on shot
+   numbers, em-dash feature lists in pricing, big italic auth title.
+   ────────────────────────────────────────────────────────────── */
+
+/* Magazine-style page title that sits between the data slate and
+   the tab content. "Shot list" / "Run of day" / "Director's notes" */
+.pg-title {
+  font-family: 'Fraunces', 'Times New Roman', serif;
+  font-weight: 300;
+  font-variation-settings: 'opsz' 144;
+  font-size: clamp(40px, 7vw, 64px);
+  line-height: 0.95;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin: 4px 0 26px;
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.pg-title em {
+  font-style: italic;
+  font-weight: 300;
+  color: var(--accent-deep);
+}
+.pg-title-mark {
+  font-family: 'DM Mono', monospace;
+  font-style: normal;
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  align-self: end;
+  padding-bottom: 8px;
+  font-weight: 500;
+}
+@media (min-width: 760px) {
+  .pg-title { font-size: 64px; margin-bottom: 32px; }
+}
+
+/* Shot meta values rendered as serif italic Roman numerals */
+.shot-meta-val.roman {
+  font-family: 'Fraunces', serif;
+  font-weight: 300;
+  font-style: italic;
+  font-size: 22px;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  text-transform: lowercase;
+}
+.shot-meta-val.roman.accent { color: var(--accent); }
+
+/* Form input that displays as serif italic body text — used for shot
+   description and director's notes */
+.finp-serif {
+  font-family: 'Fraunces', 'Times New Roman', serif !important;
+  font-weight: 300;
+  font-style: italic;
+  font-size: 17px;
+  letter-spacing: -0.005em;
+  line-height: 1.45;
+  padding: 8px 0 !important;
+  margin-bottom: 14px !important;
+}
+.finp-serif::placeholder {
+  font-style: italic;
+  color: var(--muted);
+}
+.finp-serif:focus { border-color: var(--accent-deep); }
+
+/* ── Pricing: editorial em-dash list + Roman numeral plan markers ─ */
+.plan-card { position: relative; }
+.plan-roman {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  font-family: 'Fraunces', serif;
+  font-weight: 300;
+  font-style: italic;
+  font-size: 28px;
+  letter-spacing: 0.02em;
+  color: var(--muted-2);
+  line-height: 1;
+  pointer-events: none;
+  z-index: 0;
+  opacity: .55;
+}
+.tier-pro .plan-roman,
+.tier-team .plan-roman { z-index: 2; }
+.plan-top { padding-right: 36px; position: relative; z-index: 1; }
+
+/* Em-dash feature list — replaces ✓ / × */
+.features { gap: 10px; }
+.feature {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--paper);
+  line-height: 1.5;
+}
+.feature-mark {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: 14px;
+  color: var(--accent);
+  flex-shrink: 0;
+  width: 10px;
+  line-height: 1;
+}
+.feature.off {
+  color: var(--muted-2);
+  text-decoration: line-through;
+  text-decoration-color: rgba(255,255,255,.10);
+  text-decoration-thickness: 1px;
+}
+.feature.off .feature-mark {
+  color: var(--muted-2);
+  opacity: .35;
+}
+.feature.hi { color: var(--paper); font-weight: 500; }
+
+/* ── Auth title: italic Fraunces above the form ───────────────── */
+.auth-title {
+  font-family: 'Fraunces', serif;
+  font-weight: 300;
+  font-size: 36px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-bottom: 22px;
+  color: var(--paper);
+}
+.auth-title em {
+  font-style: italic;
+  font-weight: 300;
+  color: var(--accent);
+}
+
+/* ── Polaroid caption: already italic Fraunces. Bump weight a hair ─ */
+.polaroid-cap .mood-cred {
+  font-weight: 400;
+}
+
+/* ── Slate value smoothing: Bebas + Roman together looks nicer with
+   a touch more breathing room on the slate cells */
+.slate-cell { padding: 14px 16px; }
+.slate-val { font-size: 19px; }
+
+/* ── A small editorial flourish: thin centered serif "—" between
+   sections inside the panel content ──────────────────────────── */
+.panel-inner .pg-title + .ai-wrap { margin-top: 0; }
+

@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { LIGHTING, LENSES, MOODS, SHOOT_TYPES, VIBES, id } from './data.js';
+import { LIGHTING, LENSES, MOODS, SHOOT_TYPES, VIBES, id, toRoman } from './data.js';
 import DataSlate from './DataSlate.jsx';
 
 export default function FRAMEApp({ plan }) {
@@ -222,6 +222,10 @@ export default function FRAMEApp({ plan }) {
             crew={crew}
             active="shots"
           />
+          <div className="pg-title">
+            Shot <em>list</em>
+            <span className="pg-title-mark">— vol 01</span>
+          </div>
           <div className="ai-wrap">
             <div
               style={{
@@ -415,12 +419,12 @@ export default function FRAMEApp({ plan }) {
                 <div className="shot-hdr-meta">
                   <div className="shot-meta-cell">
                     <div className="shot-meta-lbl">Scene</div>
-                    <div className="shot-meta-val">{String(i + 1).padStart(2, '0')}</div>
+                    <div className="shot-meta-val roman">{toRoman(i + 1)}</div>
                   </div>
                   <div className="shot-meta-cell">
                     <div className="shot-meta-lbl">Shot</div>
-                    <div className="shot-meta-val accent">
-                      {String(s.id).padStart(2, '0')}
+                    <div className="shot-meta-val roman accent">
+                      {toRoman(s.id)}
                     </div>
                   </div>
                   <div className="shot-meta-cell">
@@ -453,7 +457,7 @@ export default function FRAMEApp({ plan }) {
               <div className="shot-body">
                 <div className="flbl">Shot Description</div>
                 <input
-                  className="finp"
+                  className="finp finp-serif"
                   value={s.name}
                   placeholder="Describe the shot..."
                   onChange={(e) => upShot(s.id, 'name', e.target.value)}
@@ -505,7 +509,7 @@ export default function FRAMEApp({ plan }) {
                 </div>
                 <div className="flbl">Director Notes</div>
                 <input
-                  className="finp"
+                  className="finp finp-serif"
                   value={s.notes}
                   placeholder="Blocking, wardrobe, execution..."
                   onChange={(e) => upShot(s.id, 'notes', e.target.value)}
@@ -530,6 +534,10 @@ export default function FRAMEApp({ plan }) {
             crew={crew}
             active="moodboard"
           />
+          <div className="pg-title">
+            Mood<em>board</em>
+            <span className="pg-title-mark">— plates</span>
+          </div>
           <div className="slbl">Search Unsplash</div>
           <div className="arow">
             <input
@@ -633,6 +641,10 @@ export default function FRAMEApp({ plan }) {
             crew={crew}
             active="schedule"
           />
+          <div className="pg-title">
+            Run of <em>day</em>
+            <span className="pg-title-mark">— call sheet</span>
+          </div>
           <div className="slbl">Day Schedule</div>
           <div className="sched-hdr">
             <div>Time</div>
@@ -687,6 +699,10 @@ export default function FRAMEApp({ plan }) {
             crew={crew}
             active="notes"
           />
+          <div className="pg-title">
+            Director&apos;s <em>notes</em>
+            <span className="pg-title-mark">— &amp; crew</span>
+          </div>
           <div className="slbl">Director&apos;s Notes</div>
           <div className="notes-paper">
             <textarea
